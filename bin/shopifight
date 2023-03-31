@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/game'
+require_relative '../lib/clumsy_player'
+require_relative '../lib/berserk_player'
+
+game = ShopiFight::Game.new("Shopifight")
+
+default_player_file =
+File.join(File.dirname(__FILE__), 'players.csv')
+game.load_players(ARGV.shift || default_player_file)
+
+klutz = ShopiFight::ClumsyPlayer.new("klutz", 105)
+game.add_player(klutz)
+
+berserker = ShopiFight::BerserkPlayer.new("berserker", 50)
+game.add_player(berserker)
+
+loop do
+  puts "\nHow many rounds would you like to play? ('quit' to exit)"
+  answer = gets.chomp.downcase
+  case answer
+  when /^\d+$/
+    game.play(answer.to_i)
+  when 'quit', 'exit', 'q'
+    game.print_stats
+    break
+  else
+    puts "Please choose a number of rounds or 'quit'"
+  end
+end
+
+game.save_high_scores
